@@ -8,7 +8,7 @@ public final class AdventOfCode {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        Day8 day = new Day8();
+        Day9 day = new Day9();
 
         String part1 = day.getPart1Answer();
         String part2 = day.getPart2Answer();

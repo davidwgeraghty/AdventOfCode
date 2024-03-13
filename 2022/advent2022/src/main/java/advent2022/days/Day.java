@@ -7,7 +7,7 @@ import java.util.Scanner;
 public abstract class Day {
     
     protected File getInputFile(boolean test, String day) {
-        String fileName = (test ? "src/main/resources/testdata" : "src/main/resources/input") + day + ".txt";
+        String fileName = (test ? "2022/advent2022/src/main/resources/testdata" : "2022/advent2022/src/main/resources/input") + day + ".txt";
         File file = null;
         try {
             file = new File(fileName);
@@ -18,7 +18,7 @@ public abstract class Day {
         
         return file;
     }
-
+    
     protected ArrayList<String> getLinesFromFile(File file) {
         ArrayList<String> lines = new ArrayList<>();
         try {
