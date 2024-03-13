@@ -1,54 +1,60 @@
 package advent2022.days;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import org.javatuples.Pair;
+import java.util.stream.Collectors;
 
 public class Day9 extends Day
 {
-    private Pair<Integer, Integer> moveHead(String direction, Pair<Integer, Integer> headKnot) {
+    private int[] moveHead(String direction, int[] headKnot) {
         if (direction.equals("R"))
-            headKnot = headKnot.setAt0(headKnot.getValue0() + 1); // weird syntax here... '.setAt0' does not change the object it's called on, just returns a new object
+            headKnot[0] = headKnot[0] + 1;
         else if (direction.equals("L"))
-            headKnot = headKnot.setAt0(headKnot.getValue0() - 1);
+            headKnot[0] = headKnot[0] - 1;
         else if (direction.equals("U"))
-            headKnot = headKnot.setAt1(headKnot.getValue1() + 1);
+            headKnot[1] = headKnot[1] + 1;
         else if (direction.equals("D"))
-            headKnot = headKnot.setAt1(headKnot.getValue1() - 1);
+            headKnot[1] = headKnot[1] - 1;
 
         return headKnot;
     }
 
-    private Pair<Integer, Integer> moveTailTowardsHead(Pair<Integer, Integer> tailXY, Pair<Integer, Integer> headXY) {
-        if (headXY.getValue1() > tailXY.getValue1())
-            tailXY = tailXY.setAt1(tailXY.getValue1() + 1);
-        else if (headXY.getValue1() < tailXY.getValue1())
-            tailXY = tailXY.setAt1(tailXY.getValue1() - 1);
+    private int[] moveTailTowardsHead(int[] tailXY, int[] headXY) {
+        if (headXY[1] > tailXY[1])
+            tailXY[1] = tailXY[1] + 1;
+        else if (headXY[1] < tailXY[1])
+            tailXY[1] = tailXY[1] - 1;
 
-        if (headXY.getValue0() > tailXY.getValue0())
-            tailXY = tailXY.setAt0(tailXY.getValue0() + 1);
-        else if (headXY.getValue0() < tailXY.getValue0())
-            tailXY = tailXY.setAt0(tailXY.getValue0() - 1);
+        if (headXY[0] > tailXY[0])
+            tailXY[0] = tailXY[0] + 1;
+        else if (headXY[0] < tailXY[0])
+            tailXY[0] = tailXY[0] - 1;
 
         return tailXY;
     }
 
-    private boolean isTwoAway(Pair<Integer, Integer> tailXY, Pair<Integer, Integer> nextHeadXY) 
+    private boolean isTwoAway(int[] tailXY, int[] nextHeadXY) 
     {
-        return Math.abs(nextHeadXY.getValue0() - tailXY.getValue0()) == 2 
-            || Math.abs(nextHeadXY.getValue1() - tailXY.getValue1()) == 2;
+        return Math.abs(nextHeadXY[0] - tailXY[0]) == 2 
+            || Math.abs(nextHeadXY[1] - tailXY[1]) == 2;
+    }
+
+    // need to convert so that we can use the tailSet to track where we've been
+    private List<Integer> convertPrimitiveToList(int[] tailKnot) {
+        return Arrays.stream(tailKnot).boxed().collect(Collectors.toList());
     }
 
     public String getPart1Answer()
     {
         ArrayList<String> lines = getLinesFromFile(getInputFile(false, "9"));
 
-        Pair<Integer, Integer> headKnot = new Pair<Integer, Integer>(0, 0);
-        Pair<Integer, Integer> tailKnot = new Pair<Integer, Integer>(0, 0);
-        Set<Pair<Integer, Integer>> tailSet = new HashSet<Pair<Integer, Integer>>();
-        tailSet.add(tailKnot);
+        int[] headKnot = {0, 0};
+        int[] tailKnot = {0, 0};
+        Set<List<Integer>> tailSet = new HashSet<List<Integer>>();
+        tailSet.add(convertPrimitiveToList(tailKnot));
 
         for (String line : lines)
         {
@@ -61,7 +67,7 @@ public class Day9 extends Day
                 if (isTwoAway(headKnot, tailKnot))
                 {
                     tailKnot = moveTailTowardsHead(tailKnot, headKnot);
-                    tailSet.add(tailKnot);
+                    tailSet.add(convertPrimitiveToList(tailKnot));
                 }
             }
         }
@@ -73,15 +79,15 @@ public class Day9 extends Day
     {
         ArrayList<String> lines = getLinesFromFile(getInputFile(false, "9"));
 
-        Pair<Integer, Integer> headKnot = new Pair<Integer, Integer>(0, 0);
-        ArrayList<Pair<Integer, Integer>> tailKnots = new ArrayList<>();
+        int[] headKnot = {0, 0};
+        ArrayList<int[]> tailKnots = new ArrayList<>();
         for (int i = 0; i < 9; i++)
         {
-            tailKnots.add(new Pair<Integer, Integer>(0, 0));
+            tailKnots.add(new int[]{0, 0});
         }
 
-        Set<Pair<Integer, Integer>> tailSet = new HashSet<Pair<Integer, Integer>>();
-        tailSet.add(tailKnots.get(tailKnots.size() - 1));
+        Set<List<Integer>> tailSet = new HashSet<List<Integer>>();
+        tailSet.add(convertPrimitiveToList(tailKnots.get(tailKnots.size() - 1)));
 
         for (String line : lines)
         {
@@ -91,7 +97,7 @@ public class Day9 extends Day
             for (int i = 0; i < distance; i++)
             {
                 headKnot = moveHead(direction, headKnot);
-                Pair<Integer, Integer> tempknot = headKnot;
+                int[] tempknot = headKnot;
 
                 for (int j = 0; j < tailKnots.size(); j++)
                 {
@@ -101,7 +107,7 @@ public class Day9 extends Day
                     }
                     tempknot = tailKnots.get(j);
                 }
-                tailSet.add(tailKnots.get(tailKnots.size() - 1));
+                tailSet.add(convertPrimitiveToList(tailKnots.get(tailKnots.size() - 1)));
             }
         }
 
